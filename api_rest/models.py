@@ -47,7 +47,7 @@ class Problem(models.Model):
     aspect = models.ForeignKey('Aspect', on_delete = models.CASCADE)
 
     def __str__(self):
-        return self.question + ' -- ' + self.aspect.sub_cat.category.name + ' -- ' + self.aspect.sub_cate.name + ' -- ' + self.aspect.name
+        return str(self.id) + ' -- ' + self.aspect.sub_cat.category.name + ' -- ' + self.aspect.sub_cat.name + ' -- ' + self.aspect.objective
 
 class Group(models.Model):
     name = models.CharField(max_length=200)
@@ -55,7 +55,7 @@ class Group(models.Model):
     school = models.ForeignKey('School', on_delete = models.CASCADE)
 
     def __str__(self):
-        return self.name
+        return self.school.name + " -- " + self.name
 
 class Student(models.Model):
      name = models.CharField(max_length=200)
@@ -87,7 +87,7 @@ class Test(models.Model):
     weight = models.FloatField()
 
     def __str__(self):
-        return self.exam.name + " -- " +  self.aspect.name + " -- " + str(self.weight)
+        return self.exam.name + " -- " +  self.aspect.objective + " -- " + str(self.weight)
 
 class StudentAnswer(models.Model):
     test = models.ForeignKey('Test', on_delete = models.CASCADE)
@@ -97,5 +97,5 @@ class StudentAnswer(models.Model):
 
     def __str__(self):
         if self.failed == True:
-            return self.sxg.student.name + " -- " + self.test + " Fallo"
-        return self.sxg.student.name + " -- " + self.test + " Acierto"
+            return self.sxg.student.name + " -- " + str(self.test) + " Fallo"
+        return self.sxg.student.name + " -- " + str(self.test) + " Acierto"
