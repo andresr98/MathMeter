@@ -47,7 +47,7 @@ class Problem(models.Model):
     aspect = models.ForeignKey('Aspect', on_delete = models.CASCADE)
 
     def __str__(self):
-        return self.question + ' -- ' + self.aspect.sub_cat.category.name + ' -- ' self.aspect.sub_cate.name + ' -- ' +self.aspect.name
+        return self.question + ' -- ' + self.aspect.sub_cat.category.name + ' -- ' + self.aspect.sub_cate.name + ' -- ' + self.aspect.name
 
 class Group(models.Model):
     name = models.CharField(max_length=200)
