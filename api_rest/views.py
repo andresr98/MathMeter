@@ -31,8 +31,7 @@ class Groups(APIView):
 class Categories(APIView):
     def get(self, req, id):
         try:
-            #id_category = req.GET.get('id',0)
-            category = Category.objects.values('id', 'name', 'description').filter(id=id)
+            category = Category.objects.values('id','name').get(id=id)
             subcat = SubCategory.objects.values('id', 'name').filter(category_id=id)
             return Response({"status": status.HTTP_200_OK, "entity": {'category': category,'subcat': subcat} ,"error":""}, status = status.HTTP_200_OK)
         except KeyError:
@@ -53,8 +52,112 @@ class Categories(APIView):
                 print("Algo sucederá")
             elif option == 1:
                 #Listar categorias
-                categories = Category.objects.values('name').filter(teacher_id=id_teacher)
+                categories = Category.objects.values('id','name').filter(teacher_id=id_teacher)
                 return Response({"status": status.HTTP_200_OK, "entity": categories, "error":""}, status = status.HTTP_200_OK)
+        except KeyError:
+             return Response({"status": status.HTTP_400_BAD_REQUEST, "entity": "", "error":"Campos ingresados de forma incorrecta"},\
+             status=status.HTTP_400_BAD_REQUEST)
+        except ObjectDoesNotExist:
+            return Response({"status": status.HTTP_404_NOT_FOUND, "entity":"", "error":"No hay datos en la base de datos"},\
+             status= status.HTTP_404_NOT_FOUND)
+
+class SubCategories(APIView):
+    def get(self, req, id):
+        try:
+            subCategory = SubCategory.objects.values('id','name').get(id=id)
+            aspects = Aspect.objects.values('id', 'objective').filter(sub_cat_id=id)
+            return Response({"status": status.HTTP_200_OK, "entity": {'subcategory': subCategory, 'aspects': aspects} ,"error":""}, status = status.HTTP_200_OK)
+        except KeyError:
+            return Response({"status": status.HTTP_400_BAD_REQUEST, "entity": "", "error":"Campos ingresados de forma incorrecta"},\
+             status=status.HTTP_400_BAD_REQUEST)
+        except ObjectDoesNotExist:
+            return Response({"status": status.HTTP_404_NOT_FOUND, "entity":"", "error":"No hay datos en la base de datos"},\
+             status= status.HTTP_404_NOT_FOUND)
+
+    def post(self, req):
+        try:
+            body = req.data
+            id_teacher = body['id_teacher']
+            id_category = body['id_category']
+            option = body['option']
+
+            if option == 0:
+                #Crear una subcategoria
+                print("Algo sucederá")
+            elif option == 1:
+                #Listar categorias
+                subcats = SubCategory.objects.values('id', 'name').filter(category_id__teacher=id_teacher, category_id=id_category)
+                return Response({"status": status.HTTP_200_OK, "entity": subcats, "error":""}, status = status.HTTP_200_OK)
+        except KeyError:
+             return Response({"status": status.HTTP_400_BAD_REQUEST, "entity": "", "error":"Campos ingresados de forma incorrecta"},\
+             status=status.HTTP_400_BAD_REQUEST)
+        except ObjectDoesNotExist:
+            return Response({"status": status.HTTP_404_NOT_FOUND, "entity":"", "error":"No hay datos en la base de datos"},\
+             status= status.HTTP_404_NOT_FOUND)
+
+class Aspects(APIView):
+    def get(self, req, id):
+        try:
+            aspect = Aspect.objects.values('id','objective').get(id=id)
+            problems = Problem.objects.values('id', 'question').filter(aspect_id=id)
+            return Response({"status": status.HTTP_200_OK, "entity": {'aspect': aspect, 'problems': problems} ,"error":""}, status = status.HTTP_200_OK)
+        except KeyError:
+            return Response({"status": status.HTTP_400_BAD_REQUEST, "entity": "", "error":"Campos ingresados de forma incorrecta"},\
+             status=status.HTTP_400_BAD_REQUEST)
+        except ObjectDoesNotExist:
+            return Response({"status": status.HTTP_404_NOT_FOUND, "entity":"", "error":"No hay datos en la base de datos"},\
+             status= status.HTTP_404_NOT_FOUND)
+
+    def post(self, req):
+        try:
+            body = req.data
+            id_teacher = body['id_teacher']
+            id_category = body['id_category']
+            id_subcat = body['id_subcat']
+            option = body['option']
+
+            if option == 0:
+                #Crear un aspecto
+                print("Algo sucederá")
+            elif option == 1:
+                #Listar categorias
+                aspects = Aspect.objects.values('id', 'objective').filter(sub_cat_id = id_subcat, sub_cat_id__category_id__teacher=id_teacher, sub_cat_id__category_id=id_category)
+                return Response({"status": status.HTTP_200_OK, "entity": aspects, "error":""}, status = status.HTTP_200_OK)
+        except KeyError:
+             return Response({"status": status.HTTP_400_BAD_REQUEST, "entity": "", "error":"Campos ingresados de forma incorrecta"},\
+             status=status.HTTP_400_BAD_REQUEST)
+        except ObjectDoesNotExist:
+            return Response({"status": status.HTTP_404_NOT_FOUND, "entity":"", "error":"No hay datos en la base de datos"},\
+             status= status.HTTP_404_NOT_FOUND)
+
+class Problems(APIView):
+    def get(self, req, id):
+        try:
+            problem = Problem.objects.values('id','question', 'answer').get(id=id)
+            return Response({"status": status.HTTP_200_OK, "entity": {'problem': problem} ,"error":""}, status = status.HTTP_200_OK)
+        except KeyError:
+            return Response({"status": status.HTTP_400_BAD_REQUEST, "entity": "", "error":"Campos ingresados de forma incorrecta"},\
+             status=status.HTTP_400_BAD_REQUEST)
+        except ObjectDoesNotExist:
+            return Response({"status": status.HTTP_404_NOT_FOUND, "entity":"", "error":"No hay datos en la base de datos"},\
+             status= status.HTTP_404_NOT_FOUND)
+
+    def post(self, req):
+        try:
+            body = req.data
+            id_teacher = body['id_teacher']
+            id_category = body['id_category']
+            id_subcat = body['id_subcat']
+            id_aspect = body['id_aspect']
+            option = body['option']
+
+            if option == 0:
+                #Crear un aspecto
+                print("Algo sucederá")
+            elif option == 1:
+                #Listar categorias
+                problems = Problem.objects.values('id','question').filter(aspect_id__sub_cat_id = id_subcat, aspect_id__sub_cat_id__category_id__teacher=id_teacher, aspect_id__sub_cat_id__category_id=id_category, aspect_id=id_aspect)
+                return Response({"status": status.HTTP_200_OK, "entity": problems, "error":""}, status = status.HTTP_200_OK)
         except KeyError:
              return Response({"status": status.HTTP_400_BAD_REQUEST, "entity": "", "error":"Campos ingresados de forma incorrecta"},\
              status=status.HTTP_400_BAD_REQUEST)
