@@ -164,3 +164,61 @@ class Problems(APIView):
         except ObjectDoesNotExist:
             return Response({"status": status.HTTP_404_NOT_FOUND, "entity":"", "error":"No hay datos en la base de datos"},\
              status= status.HTTP_404_NOT_FOUND)
+
+class Exams(APIView):
+
+    def get(self, req):
+        try:
+            exams = Exam.objects.values('id','name',"teacher__name")
+            return Response({"status": status.HTTP_200_OK, "entity": exams ,"error":""}, status = status.HTTP_200_OK)
+        except KeyError:
+             return Response({"status": status.HTTP_400_BAD_REQUEST, "entity": "", "error":"Campos ingresados de forma incorrecta"},\
+             status=status.HTTP_400_BAD_REQUEST)
+        except ObjectDoesNotExist:
+            return Response({"status": status.HTTP_404_NOT_FOUND, "entity":"", "error":"No hay datos en la base de datos"},\
+             status= status.HTTP_404_NOT_FOUND)
+
+    def post(self, req):
+        try:
+            body = req.data
+            id_teacher = body['id_teacher']
+            option = body['option']
+
+            if option == 0:
+                #Crear un examen
+                print("Algo sucederá")
+            elif option == 1:
+                #Listar examenes de un profesor
+                exams = Exam.objects.values('id','name').filter(teacher_id=id_teacher)
+                return Response({"status": status.HTTP_200_OK, "entity": exams, "error":""}, status = status.HTTP_200_OK)
+        except KeyError:
+             return Response({"status": status.HTTP_400_BAD_REQUEST, "entity": "", "error":"Campos ingresados de forma incorrecta"},\
+             status=status.HTTP_400_BAD_REQUEST)
+        except ObjectDoesNotExist:
+            return Response({"status": status.HTTP_404_NOT_FOUND, "entity":"", "error":"No hay datos en la base de datos"},\
+             status= status.HTTP_404_NOT_FOUND)
+
+class Tests(APIView):
+
+    def post(self, req):
+        try:
+            body = req.data
+            id_exam = body['id_exam']
+            option = body['option']
+
+            if option == 0:
+                #Crear un test
+                print("Algo sucederá")
+            elif option == 1:
+                #Listar test de un examen
+                test = Test.objects.values('id','exam__name',"aspect__objective","weight").filter(exam_id=id_exam)
+                return Response({"status": status.HTTP_200_OK, "entity": test, "error":""}, status = status.HTTP_200_OK)
+        except KeyError:
+             return Response({"status": status.HTTP_400_BAD_REQUEST, "entity": "", "error":"Campos ingresados de forma incorrecta"},\
+             status=status.HTTP_400_BAD_REQUEST)
+        except ObjectDoesNotExist:
+            return Response({"status": status.HTTP_404_NOT_FOUND, "entity":"", "error":"No hay datos en la base de datos"},\
+             status= status.HTTP_404_NOT_FOUND)
+
+
+

@@ -13,4 +13,6 @@ urlpatterns = [
     path('aspects/<int:id>', views.Aspects.as_view()),
     path('problems', views.Problems.as_view()),
     path('problems/<int:id>', views.Problems.as_view()),
+    path('exams', views.Exams.as_view()),
+    path('tests', views.Tests.as_view()),
 ]
