@@ -14,5 +14,6 @@ urlpatterns = [
     path('problems', views.Problems.as_view()),
     path('problems/<int:id>', views.Problems.as_view()),
     path('exams', views.Exams.as_view()),
+    path('exams/<int:id>', views.Exams.as_view()),
     path('tests', views.Tests.as_view()),
 ]

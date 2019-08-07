@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from .models import *
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Sum
+import random
 
 # Create your views here.
 def index(request):
@@ -167,7 +168,31 @@ class Problems(APIView):
 
 class Exams(APIView):
 
-    def get(self, req):
+    def get(self, req, id):
+        try:
+            exam = Exam.objects.values('id', 'name', 'duration').get(id=id)
+            tests = Test.objects.values('id','weight', 'aspect').filter(exam_id=id)
+            questions = []
+            problems_id = []
+
+            for test in tests:
+                problems = Problem.objects.values('id', 'question', 'answer').filter(aspect_id=test['aspect']).exclude(id__in=(problems_id))
+                len_problems = len(problems)
+                index = random.randint(0, len_problems-1)
+                questions.append({
+                    'question': problems[index],
+                    'weight': test['weight']
+                })
+                problems_id.append(problems[index]['id'])
+            return Response({"status": status.HTTP_200_OK, "entity": {'exam': exam, 'questions': questions} ,"error":""}, status = status.HTTP_200_OK)
+        except KeyError:
+            return Response({"status": status.HTTP_400_BAD_REQUEST, "entity": "", "error":"Campos ingresados de forma incorrecta"},\
+             status=status.HTTP_400_BAD_REQUEST)
+        except ObjectDoesNotExist:
+            return Response({"status": status.HTTP_404_NOT_FOUND, "entity":"", "error":"No hay datos en la base de datos"},\
+             status= status.HTTP_404_NOT_FOUND)
+
+    """def get(self, req):
         try:
             exams = Exam.objects.values('id','name',"teacher__name")
             return Response({"status": status.HTTP_200_OK, "entity": exams ,"error":""}, status = status.HTTP_200_OK)
@@ -176,7 +201,7 @@ class Exams(APIView):
              status=status.HTTP_400_BAD_REQUEST)
         except ObjectDoesNotExist:
             return Response({"status": status.HTTP_404_NOT_FOUND, "entity":"", "error":"No hay datos en la base de datos"},\
-             status= status.HTTP_404_NOT_FOUND)
+             status= status.HTTP_404_NOT_FOUND)"""
 
     def post(self, req):
         try:
@@ -198,8 +223,7 @@ class Exams(APIView):
             return Response({"status": status.HTTP_404_NOT_FOUND, "entity":"", "error":"No hay datos en la base de datos"},\
              status= status.HTTP_404_NOT_FOUND)
 
-class Tests(APIView):
-
+class Tests(APIView):  
     def post(self, req):
         try:
             body = req.data
