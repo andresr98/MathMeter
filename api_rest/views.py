@@ -180,11 +180,11 @@ class Exams(APIView):
                 len_problems = len(problems)
                 index = random.randint(0, len_problems-1)
                 questions.append({
-                    'question': problems[index],
-                    'weight': test['weight']
+                    'problem': problems[index],
+                    'test': test
                 })
                 problems_id.append(problems[index]['id'])
-            return Response({"status": status.HTTP_200_OK, "entity": {'exam': exam, 'questions': questions} ,"error":""}, status = status.HTTP_200_OK)
+            return Response({"status": status.HTTP_200_OK, "entity": {'exam': exam, 'tests': questions} ,"error":""}, status = status.HTTP_200_OK)
         except KeyError:
             return Response({"status": status.HTTP_400_BAD_REQUEST, "entity": "", "error":"Campos ingresados de forma incorrecta"},\
              status=status.HTTP_400_BAD_REQUEST)
