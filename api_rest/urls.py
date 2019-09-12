@@ -17,4 +17,5 @@ urlpatterns = [
     path('exams/<int:id>', views.Exams.as_view()),
     path('tests', views.Tests.as_view()),
     path('studentAnswers', views.StudentAnswers.as_view()),
+    path('studentsxgroups', views.StudensXGroups.as_view()),
 ]
