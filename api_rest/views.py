@@ -273,3 +273,28 @@ class StudentAnswers(APIView):
         except ObjectDoesNotExist:
             return Response({"status": status.HTTP_404_NOT_FOUND, "entity":"", "error":"No hay datos en la base de datos"},\
              status= status.HTTP_404_NOT_FOUND)
+
+class StudensXGroups(APIView):
+    def post(self, req):
+        try:
+            body = req.data
+            id_student = body['id_student']
+            id_group = body['id_group']
+            option = body['option']
+
+            if option == 0:
+                #se creara un estudiantexgroup
+                print("Hola mundo")
+            elif option == 1:
+                sxg = StudentXGroup.objects.values('id', 'student__name').get(group=id_group,student=id_student)
+
+                if not sxg:
+                    return Response({"status": status.HTTP_404_NOT_FOUND, "entity": "", "error":"Los campos no existen"},status=status.HTTP_404_NOT_FOUND)
+                else:
+                    return Response({"status": status.HTTP_200_OK, "entity": sxg, "error":""}, status = status.HTTP_200_OK)
+        except KeyError:
+             return Response({"status": status.HTTP_400_BAD_REQUEST, "entity": "", "error":"Campos ingresados de forma incorrecta"},\
+             status=status.HTTP_400_BAD_REQUEST)
+        except ObjectDoesNotExist:
+            return Response({"status": status.HTTP_404_NOT_FOUND, "entity":"", "error":"No hay datos en la base de datos"},\
+             status= status.HTTP_404_NOT_FOUND)  
