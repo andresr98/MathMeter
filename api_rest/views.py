@@ -171,7 +171,7 @@ class Exams(APIView):
     def get(self, req, id):
         try:
             exam = Exam.objects.values('id', 'name', 'duration').get(id=id)
-            tests = Test.objects.values('id','weight', 'aspect').filter(exam_id=id)
+            tests = Test.objects.values('id','weight', 'aspect', 'aspect__description', 'aspect__sub_cat', 'aspect__sub_cat_id__name').filter(exam_id=id)
             questions = []
             problems_id = []
 
